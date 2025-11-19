@@ -1,8 +1,8 @@
 
 import os
-from pymongo import MongoClient, TEXT, HASHED
+from pymongo import MongoClient
 from bson.objectid import ObjectId
-from marshmallow import Schema, fields, validate, post_load
+from marshmallow import Schema, fields, validate, ValidationError
 from datetime import datetime
 
 # --- Database Connection ---
@@ -23,7 +23,7 @@ class ObjectIdField(fields.Field):
         try:
             return ObjectId(value)
         except Exception as e:
-            raise validate.ValidationError("Invalid ObjectId.") from e
+            raise ValidationError("Invalid ObjectId.") from e
 
 
 class UserSchema(Schema):
@@ -32,27 +32,30 @@ class UserSchema(Schema):
     password_hash = fields.String(required=True, load_only=True) # load_only = never send in API response
     full_name = fields.String(required=True)
     phone_number = fields.String(required=False, allow_none=True)
-    telegram_chat_id = fields.String(required=False, allow_none=True)
-    role = fields.String(required=True, validate=validate.OneOf(["user", "admin"]), default="user")
-    created_at = fields.DateTime(dump_only=True, default=datetime.utcnow)
-    last_login = fields.DateTime(required=False, allow_none=True)
-    is_active = fields.Boolean(default=True)
+    telegram_chat_id = fields.String(load_default=None)
+    role = fields.String(
+        validate=validate.OneOf(["user", "admin"]), 
+        load_default="user"
+    )
+    created_at = fields.DateTime(dump_only=True, dump_default=datetime.utcnow)
+    last_login = fields.DateTime(load_default=None)
+    is_active = fields.Boolean(load_default=True)
 
 class VehicleSchema(Schema):
     _id = ObjectIdField(dump_only=True)
     user_id = ObjectIdField(required=True)
     manufacturer = fields.String(required=True)
     model = fields.String(required=True)
-    year = fields.Integer(required=True, validate=validate.Range(min=1900)) [cite: 935]
+    year = fields.Integer(required=True, validate=validate.Range(min=1900))
     color = fields.String(required=False, allow_none=True)
     license_plate = fields.String(required=True)
-    vin = fields.String(required=False, allow_none=True, validate=validate.Length(equal=17)) [cite: 2437]
+    vin = fields.String(required=False, allow_none=True, validate=validate.Length(equal=17))
     purchase_date = fields.DateTime(required=False, allow_none=True)
     initial_mileage = fields.Integer(required=True, validate=validate.Range(min=0))
     current_mileage = fields.Integer(required=True, validate=validate.Range(min=0))
-    last_mileage_update = fields.DateTime(required=True, default=datetime.utcnow)
-    created_at = fields.DateTime(dump_only=True, default=datetime.utcnow)
-    is_active = fields.Boolean(default=True)
+    last_mileage_update = fields.DateTime(load_default=datetime.utcnow)
+    created_at = fields.DateTime(dump_only=True, dump_default=datetime.utcnow)
+    is_active = fields.Boolean(load_default=True)
 
 class ServiceRecordSchema(Schema):
     _id = ObjectIdField(dump_only=True)
@@ -63,14 +66,14 @@ class ServiceRecordSchema(Schema):
             "oil_change", "tire_rotation", "brake_service", 
             "timing_belt", "air_filter", "battery", "other"
         ])
-    ) [cite: 955-957]
+    ) 
     service_date = fields.DateTime(required=True)
     mileage_at_service = fields.Integer(required=True, validate=validate.Range(min=0))
     cost = fields.Float(required=False, allow_none=True, validate=validate.Range(min=0))
     service_provider = fields.String(required=False, allow_none=True)
     service_location = fields.String(required=False, allow_none=True)
-    notes = fields.String(required=False, allow_none=True, validate=validate.Length(max=1000)) [cite: 2441]
-    created_at = fields.DateTime(dump_only=True, default=datetime.utcnow)
+    notes = fields.String(required=False, allow_none=True, validate=validate.Length(max=1000)) 
+    created_at = fields.DateTime(dump_only=True, dump_default=datetime.utcnow)
     created_by = ObjectIdField(required=True)
 
 class MaintenancePredictionSchema(Schema):
@@ -79,26 +82,25 @@ class MaintenancePredictionSchema(Schema):
     maintenance_type = fields.String(required=True) 
     predicted_date = fields.DateTime(required=True)
     predicted_mileage = fields.Integer(required=True)
-    calculated_at = fields.DateTime(dump_only=True, default=datetime.utcnow)
+    calculated_at = fields.DateTime(dump_only=True, dump_default=datetime.utcnow)
     last_notification_sent = fields.DateTime(required=False, allow_none=True)
     notification_status = fields.String(
-        required=True,
         validate=validate.OneOf(["pending", "sent", "completed", "cancelled"]),
-        default="pending"
-    ) [cite: 2444]
+        load_default="pending"
+    ) 
     confidence_level = fields.Float(
         required=False, 
         allow_none=True, 
         validate=validate.Range(min=0.0, max=1.0)
     )
-    is_active = fields.Boolean(default=True)
+    is_active = fields.Boolean(load_default=True)
 
 class AccidentHistorySchema(Schema):
     _id = ObjectIdField(dump_only=True)
     vehicle_id = ObjectIdField(required=True)
     accident_date = fields.DateTime(required=True)
     accident_location = fields.String(required=False, allow_none=True)
-    description = fields.String(required=True, validate=validate.Length(max=2000)) [cite: 2446]
+    description = fields.String(required=True, validate=validate.Length(max=2000))
     estimated_cost = fields.Float(required=False, allow_none=True, validate=validate.Range(min=0))
     insurance_claim = fields.String(required=False, allow_none=True)
     police_report_number = fields.String(required=False, allow_none=True)
@@ -106,8 +108,8 @@ class AccidentHistorySchema(Schema):
         required=False,
         allow_none=True,
         validate=validate.OneOf(["minor", "moderate", "severe", "total_loss"])
-    ) [cite: 2447]
-    created_at = fields.DateTime(dump_only=True, default=datetime.utcnow)
+    ) 
+    created_at = fields.DateTime(dump_only=True, dump_default=datetime.utcnow)
     created_by = ObjectIdField(required=True)
 
 # --- Workshops ---
@@ -119,18 +121,18 @@ class AddressSchema(Schema):
     postal_code = fields.String(required=False, allow_none=True)
 
 class LocationSchema(Schema):
-    type = fields.String(default="Point", validate=validate.OneOf(["Point"]))
+    type = fields.String(load_default="Point", validate=validate.OneOf(["Point"]))
     coordinates = fields.List(
         fields.Float(), 
         required=True, 
-        validate=validate.Length(equal=2) # [longitude, latitude]
+        validate=validate.Length(equal=2)
     )
 
 class WorkshopSchema(Schema):
     _id = ObjectIdField(dump_only=True)
     name = fields.String(required=True)
     address = fields.Nested(AddressSchema, required=True)
-    location = fields.Nested(LocationSchema, required=True) # GeoJSON
+    location = fields.Nested(LocationSchema, required=True) # 
     phone_number = fields.String(required=False, allow_none=True)
     services_offered = fields.List(fields.String(), required=False, allow_none=True)
     operating_hours = fields.String(required=False, allow_none=True)
@@ -139,14 +141,11 @@ class WorkshopSchema(Schema):
         allow_none=True, 
         validate=validate.Range(min=0, max=5)
     )
-    created_at = fields.DateTime(dump_only=True, default=datetime.utcnow)
+    created_at = fields.DateTime(dump_only=True, dump_default=datetime.utcnow)
     updated_at = fields.DateTime(required=False, allow_none=True)
-    is_active = fields.Boolean(default=True)
+    is_active = fields.Boolean(load_default=True)
 
 class SessionSchema(Schema):
-    """
-    Schema for the Sessions collection (managed by Flask-Session). [cite: 2452]
-    """
     _id = fields.String(required=True)
     val = fields.Raw(required=True)
     expireAt = fields.DateTime(required=True)
