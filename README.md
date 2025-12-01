@@ -2,9 +2,9 @@
 
 Before you begin, ensure you have the following installed on your system:
 
-#### [Python 3.8+] (https://www.python.org/)
+#### [Python 3.8+](https://www.python.org/)
 
-#### [Docker and Docker Compose0 (for running the database) (https://docs.docker.com/desktop/setup/install/windows-install/)
+#### [Docker and Docker Compose](https://docs.docker.com/desktop/setup/install/windows-install/) (for running the database) 
 
 ## Installation
 
