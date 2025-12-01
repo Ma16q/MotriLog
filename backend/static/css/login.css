@@ -23,7 +23,7 @@ body.login-page {
 }
 
 .login-container {
-    background: url(login.jpg);
+    background: url("/static/img/login.jpg") center/cover no-repeat;
     background-repeat:no-repeat;
     background-position: center;
     background-attachment: fixed;
