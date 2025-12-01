@@ -3,7 +3,7 @@ from flask_session import Session
 from .models import initialize_database, db 
 from .routes.auth import auth_bp
 from .routes.history import history_bp
-from .routes.vehicles_bp import vehicles_bp
+from .routes.vehicles import vehicles_bp
 from datetime import timedelta
 from .routes.web import web_bp
 def create_app():
