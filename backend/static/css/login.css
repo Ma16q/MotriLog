@@ -1,43 +1,31 @@
-/* === ROOT === */
 :root {
     --bg-overlay: #343638;
     --white: #FFFFFF;
     --light-fill: #F5F5F7;
     --placeholder: #8E8E93;
-    --text-main: #1C1C1E;
     --motri-blue: #007AFF;
-
     --radius: 8px;
-    --font: "Inter", sans-serif;
+    --font: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-/* === PAGE LAYOUT === */
 body.login-page {
-    
     margin: 0;
     font-family: var(--font);
     background: var(--bg-overlay);
-    display: flex;
     height: 100vh;
+    display: flex;
     overflow: hidden;
 }
 
 .login-container {
-    background: url("/static/img/login.jpg") center/cover no-repeat;
-    background-repeat:no-repeat;
-    background-position: center;
-    background-attachment: fixed;
-    background-size: cover;
-
-    position: relative;
     display: grid;
     grid-template-columns: 1fr 1fr;
     width: 100%;
 }
 
-/* === LEFT SIDE IMAGE === */
 .login-left {
-    
+    background: url("../img/car-interior.jpg") center/cover no-repeat;
+    position: relative;
 }
 
 .brand-logo {
@@ -49,7 +37,6 @@ body.login-page {
     color: white;
 }
 
-/* === RIGHT SIDE === */
 .login-right {
     display: flex;
     align-items: center;
@@ -57,7 +44,6 @@ body.login-page {
     background: rgba(52, 54, 56, 0.85);
 }
 
-/* === CARD === */
 .login-card {
     background: var(--white);
     border-radius: 24px;
@@ -72,7 +58,6 @@ body.login-page {
     font-weight: 700;
 }
 
-/* === INPUTS === */
 .form-group {
     margin-bottom: 16px;
     display: flex;
@@ -97,22 +82,19 @@ input::placeholder {
     color: var(--placeholder);
 }
 
-/* === PRIMARY BUTTON === */
 .btn-primary {
     width: 100%;
     height: 48px;
-    border-radius: var(--radius);
+    border-radius: 10px;
     border: none;
     color: white;
     font-size: 16px;
     font-weight: 600;
-    margin-top: 12px;
-    cursor: pointer;
-
     background: linear-gradient(90deg, #0AC5D4, #007AFF);
+    cursor: pointer;
+    margin-top: 8px;
 }
 
-/* === TEXT + LINKS === */
 .register-text {
     text-align: center;
     font-size: 14px;
@@ -121,13 +103,12 @@ input::placeholder {
 
 .register-text a {
     color: var(--motri-blue);
-    font-weight: 500;
     text-decoration: none;
+    font-weight: 500;
 }
 
-/* === ERROR TEXT === */
 .error-text {
     color: red;
     font-size: 14px;
-    margin: 0 0 8px 0;
+    margin: 4px 0 0 0;
 }
