@@ -6,6 +6,7 @@ from .routes.history import history_bp
 from .routes.vehicles import vehicles_bp
 from datetime import timedelta
 from .routes.web import web_bp
+from .routes.predictions import predictions_bp
 def create_app():
     app = Flask(__name__)
 
@@ -24,6 +25,7 @@ def create_app():
     app.register_blueprint(auth_bp, url_prefix='/api')
     app.register_blueprint(history_bp, url_prefix='/api')
     app.register_blueprint(vehicles_bp, url_prefix='/api')
+    app.register_blueprint(predictions_bp, url_prefix='/api')
 
     app.register_blueprint(web_bp)
     return app
