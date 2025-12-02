@@ -6,6 +6,8 @@ web_bp = Blueprint('web_bp', __name__)
 # Define routes to serve your HTML files
 
 @web_bp.route('/')
+def main_page():
+    return render_template("Main_Page.html")
 @web_bp.route('/dashboard')
 def dashboard():
     return render_template('Dashboard.html')
