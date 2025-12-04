@@ -3,7 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <title>MotriLog – Register</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/register.css') }}"
+    />
   </head>
 
   <body class="register-page">
@@ -23,7 +26,7 @@
                 type="text"
                 id="first-name"
                 name="first_name"
-                placeholder="John"
+                placeholder="??????"
                 required
               />
             </div>
@@ -34,7 +37,7 @@
                 type="text"
                 id="last-name"
                 name="last_name"
-                placeholder="Doe"
+                placeholder="???????"
                 required
               />
             </div>
@@ -106,6 +109,6 @@
       </div>
     </div>
 
-    <script src="../static/js/auth.js"></script>
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
   </body>
 </html>

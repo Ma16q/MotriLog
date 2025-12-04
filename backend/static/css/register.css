@@ -8,22 +8,25 @@
     --font: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-body.register-page {
+/* Fix screen split */
+.register-page {
     margin: 0;
     font-family: var(--font);
-    background: #343638;
     height: 100vh;
     overflow: hidden;
+    display: flex;
 }
 
 .register-container {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    height: 100%;
+    grid-template-columns: 45% 55%; /* Better proportions */
+    width: 100%;
 }
 
+/* LEFT SIDE FIX */
 .register-left {
     background: url("../img/car-interior.jpg") center/cover no-repeat;
+    height: 100%;
     position: relative;
 }
 
@@ -36,17 +39,20 @@ body.register-page {
     color: white;
 }
 
+/* RIGHT SIDE FIX */
 .register-right {
-    background: rgba(52,54,56,0.85);
+    background: rgba(0, 0, 0, 0.35); /* Lighter overlay */
+    backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 32px;
 }
 
+/* FORM CARD FIX */
 .register-card {
     background: var(--white);
-    width: 500px;
+    width: 520px;
     padding: 40px 48px;
     border-radius: 24px;
     box-shadow: 0 18px 40px rgba(0,0,0,0.25);
@@ -58,6 +64,7 @@ body.register-page {
     font-weight: 700;
 }
 
+/* GRID FIX */
 .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -78,6 +85,7 @@ body.register-page {
     margin-bottom: 6px;
 }
 
+/* INPUT FIX */
 input {
     height: 48px;
     border-radius: 8px;
@@ -91,12 +99,14 @@ input::placeholder {
     color: var(--placeholder);
 }
 
-.terms label {
-    display: flex;
-    gap: 8px;
+/* TERMS */
+.terms {
     font-size: 14px;
+    display: flex;
+    align-items: center;
 }
 
+/* BUTTON FIX */
 .btn-primary {
     height: 48px;
     border: none;
@@ -106,9 +116,9 @@ input::placeholder {
     color: white;
     background: linear-gradient(90deg, #0AC5D4, #007AFF);
     cursor: pointer;
-    margin-top: 8px;
 }
 
+/* TEXT LINKS */
 .login-text {
     text-align: center;
     margin-top: 16px;
@@ -121,7 +131,9 @@ input::placeholder {
     font-weight: 500;
 }
 
+/* ERROR FIX */
 .error-text {
     color: red;
     font-size: 14px;
+    margin-top: 4px;
 }
