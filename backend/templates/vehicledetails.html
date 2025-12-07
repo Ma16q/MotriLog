@@ -26,35 +26,41 @@
               src="../static/img/car-interior.jpg"
               alt="Vehicle"
             />
-            <input type="file" id="upload-img-input" class="upload-input" />
+
+            <label id="upload-img-label" for="upload-img-input"
+              >Upload Image</label
+            >
+            <input type="file" id="upload-img-input" />
           </div>
 
           <div class="vehicle-meta">
             <h1 id="vehicle-title">Vehicle Name</h1>
             <p id="vehicle-plate" class="muted">Plate</p>
 
-            <div id="vehicle-details" class="vehicle-details-box">
-              Loading details...
-            </div>
+            <div id="vehicle-details">Loading details...</div>
 
-            <button id="delete-vehicle-btn" class="btn-danger small-btn">
+            <button id="delete-vehicle-btn" class="btn-danger">
               Delete Vehicle
             </button>
           </div>
         </div>
 
+        <!-- PREDICTIONS -->
         <section class="section">
           <h2>Predictions</h2>
-          <div id="predictions-box" class="predictions-list"></div>
+          <div id="predictions-box"></div>
         </section>
 
+        <!-- SERVICE HISTORY -->
         <section class="section">
           <h2>Service History</h2>
           <div id="service-history" class="service-history"></div>
         </section>
 
+        <!-- ADD SERVICE FORM -->
         <section class="section">
           <h3>Add Service Record</h3>
+
           <form id="service-form" class="service-form">
             <div class="form-row">
               <div class="form-group">
