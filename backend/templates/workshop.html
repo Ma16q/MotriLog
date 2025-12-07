@@ -3,32 +3,35 @@
   <head>
     <meta charset="UTF-8" />
     <title>MotriLog – Workshops</title>
+
+    <!-- Leaflet CSS -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+    />
+
     <link rel="stylesheet" href="../static/css/workshops.css" />
   </head>
 
   <body class="workshops-page">
-    <!-- MAP BACKGROUND -->
-    <div id="map-bg"></div>
+    <div id="map"></div>
 
-    <!-- HEADER -->
     <header class="app-header">
-      <!-- Logo goes to main page -->
       <a href="/" class="brand-logo">MotriLog</a>
 
       <div class="header-actions">
-        <a href="dashboard" class="btn-ghost small">← Back</a>
+        <a href="/dashboard" class="btn-ghost small">← Back</a>
         <button id="logout-btn" class="btn-ghost">Logout</button>
       </div>
     </header>
 
-    <!-- FLOATING CARD -->
     <div class="floating-card">
       <div class="search-bar">
         <span class="search-icon">🔍</span>
         <input
-          type="text"
           id="search-input"
-          placeholder="Search for workshops..."
+          type="text"
+          placeholder="Search workshops..."
         />
       </div>
 
@@ -42,33 +45,18 @@
       </div>
 
       <h3 class="list-title">Nearby Workshops</h3>
-
-      <ul class="workshop-list" id="workshop-list">
-        <!-- Will be filled dynamically from Google Places -->
-      </ul>
+      <ul class="workshop-list" id="workshop-list"></ul>
 
       <button id="directions-btn" class="btn-primary full mt-16">
         Get Directions
       </button>
     </div>
 
-    <!-- Auth (logout handling) -->
     <script src="../static/js/auth.js"></script>
 
-    <!-- Workshops logic -->
-    <script src="../static/js/workshops.js"></script>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
 
-    <!-- Google Maps JS API (Dark Mode map) -->
-    <script
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDc-KRt7xmzTtvPdCZPGrgtttlUSqtkW_k&libraries=places&callback=initMap"
-      async
-      defer
-    ></script>
-    <script
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDc-KRt7xmzTtvPdCZPGrgtttlUSqtkW_k&libraries=places&callback=initMap"
-      async
-      defer
-    ></script>
     <script src="../static/js/workshops.js"></script>
   </body>
 </html>

@@ -19,7 +19,7 @@ body.workshops-page {
 }
 
 /* FULLSCREEN MAP */
-#map-bg {
+#map {
   position: fixed;
   inset: 0;
   z-index: 0;
@@ -72,17 +72,18 @@ body.workshops-page {
 /* FLOATING CARD */
 .floating-card {
   position: absolute;
-  left: 50%;
+  
   bottom: 32px;
-  transform: translateX(-50%);
+  left: 24px;
+transform: none;
   width: 92%;
-  max-width: 480px;
+  max-width: 390px;
   background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(14px);
   border-radius: var(--radius-card);
-  padding: 20px 24px 28px;
+  padding: 18px 20px;
   box-shadow: 0 22px 50px rgba(15, 23, 42, 0.55);
-  z-index: 2;
+  z-index: 3;
 }
 
 /* SEARCH BAR */
@@ -121,6 +122,7 @@ body.workshops-page {
   gap: 8px;
   overflow-x: auto;
   padding-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 .chip {
@@ -138,13 +140,14 @@ body.workshops-page {
   color: white;
 }
 
-/* LIST */
+/* LIST TITLE */
 .list-title {
-  margin: 16px 0 10px 0;
+  margin: 12px 0 8px 0;
   font-size: 16px;
   font-weight: 600;
 }
 
+/* WORKSHOP LIST */
 .workshop-list {
   max-height: 230px;
   overflow-y: auto;
@@ -179,7 +182,8 @@ body.workshops-page {
   font-size: 15px;
 }
 
-.workshop-info .muted {
+.workshop-info .muted,
+.muted {
   margin: 0;
   font-size: 13px;
   color: var(--muted);
@@ -202,15 +206,11 @@ body.workshops-page {
   cursor: not-allowed;
 }
 
+/* HELPERS */
 .full {
   width: 100%;
 }
 
 .mt-16 {
   margin-top: 16px;
-}
-#map-bg {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
 }
