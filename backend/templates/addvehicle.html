@@ -10,81 +10,71 @@
   </head>
 
   <body class="add-vehicle-page">
-    <!-- LOGO (Top Left Clickable) -->
+    <!-- LOGO (Clickable) -->
     <div class="logo-box">
       <span class="logo-text" onclick="window.location.href='/'">MotriLog</span>
     </div>
 
-    <!-- FORM CONTAINER FLOATING RIGHT -->
+    <!-- MAIN CARD -->
     <div class="form-card">
       <a href="/dashboard" class="back-link">← Back to Dashboard</a>
 
       <h1 class="title">Add New Vehicle</h1>
 
       <form id="add-vehicle-form" class="form-grid">
+        <!-- Make -->
         <div class="form-group">
           <label for="vehicle-make">Make</label>
-          <input
-            type="text"
-            id="vehicle-make"
-            placeholder="e.g., Nissan"
-            required
-          />
+          <input type="text" id="vehicle-make" required />
         </div>
 
+        <!-- Model -->
         <div class="form-group">
           <label for="vehicle-model">Model</label>
-          <input
-            type="text"
-            id="vehicle-model"
-            placeholder="e.g., Altima"
-            required
-          />
+          <input type="text" id="vehicle-model" required />
         </div>
 
+        <!-- Year -->
         <div class="form-group">
           <label for="vehicle-year">Year</label>
-          <input type="number" id="vehicle-year" placeholder="2020" required />
+          <input type="number" id="vehicle-year" required />
         </div>
 
+        <!-- License Plate -->
         <div class="form-group">
           <label for="vehicle-plate">License Plate</label>
-          <input
-            type="text"
-            id="vehicle-plate"
-            placeholder="ABC-1234"
-            required
-          />
+          <input type="text" id="vehicle-plate" required />
         </div>
 
+        <!-- Color (optional with color picker) -->
         <div class="form-group">
-          <label for="vehicle-color">Color</label>
-          <input
-            type="text"
-            id="vehicle-color"
-            placeholder="e.g., Black"
-            required
-          />
+          <label for="vehicle-color">Color (optional)</label>
+          <div class="color-row">
+            <input type="color" id="color-picker" value="#000000" />
+            <input
+              type="text"
+              id="vehicle-color"
+              placeholder="Color name (optional)"
+            />
+          </div>
         </div>
 
+        <!-- Initial Mileage -->
         <div class="form-group">
           <label for="vehicle-mileage">Initial Mileage</label>
-          <input
-            type="number"
-            id="vehicle-mileage"
-            placeholder="e.g., 120000"
-            required
-          />
+          <input type="number" id="vehicle-mileage" required />
         </div>
 
+        <!-- VIN -->
         <div class="form-group full">
-          <label for="vehicle-vin">VIN</label>
-          <input
-            type="text"
-            id="vehicle-vin"
-            placeholder="Enter VIN"
-            required
-          />
+          <label for="vehicle-vin">VIN (optional)</label>
+          <input type="text" id="vehicle-vin" maxlength="17" />
+        </div>
+
+        <!-- Purchase Date -->
+        <div class="form-group full">
+          <label for="purchase-date">Purchase Date (optional)</label>
+          <input type="date" id="purchase-date" />
         </div>
 
         <p id="vehicle-error" class="error-text full" hidden></p>

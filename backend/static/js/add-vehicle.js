@@ -1,30 +1,48 @@
 console.log("ADD-VEHICLE.JS LOADED!");
 
-
 async function handle_add_vehicle_submit(event) {
   event.preventDefault();
 
-  const makeInput = document.getElementById("vehicle-make");
-  const modelInput = document.getElementById("vehicle-model");
-  const yearInput = document.getElementById("vehicle-year");
-  const plateInput = document.getElementById("vehicle-plate");
-  const vinInput = document.getElementById("vehicle-vin");
+  const make = document.getElementById("vehicle-make").value.trim();
+  const model = document.getElementById("vehicle-model").value.trim();
+  const year = parseInt(document.getElementById("vehicle-year").value.trim());
+  const plate = document.getElementById("vehicle-plate").value.trim();
+  const mileage = document.getElementById("vehicle-mileage").value.trim();
+  const color = document.getElementById("vehicle-color").value.trim();
+  const vin = document.getElementById("vehicle-vin").value.trim();
+  const purchase_date = document.getElementById("purchase-date").value;
   const errorEl = document.getElementById("vehicle-error");
 
-  if (errorEl) {
-    errorEl.hidden = true;
-    errorEl.textContent = "";
+  // Reset error display
+  errorEl.hidden = true;
+  errorEl.textContent = "";
+
+  // VALIDATIONS
+  if (year < 1900) {
+    showError("Year cannot be less than 1900.");
+    return;
+  }
+
+  if (plate.length < 5) {
+    showError("License plate must be at least 5 characters.");
+    return;
+  }
+
+  if (vin && vin.length !== 17) {
+    showError("VIN must be exactly 17 characters.");
+    return;
   }
 
   const payload = {
-    manufacturer: makeInput.value.trim(),
-    model: modelInput.value.trim(),
-    year: parseInt(yearInput.value, 10),
-    license_plate: plateInput.value.trim(),
-    initial_mileage: 0,
-    current_mileage: 0,
-    color: "",
-    vin: vinInput.value.trim()
+    manufacturer: make,
+    model: model,
+    year: year,
+    license_plate: plate,
+    initial_mileage: parseInt(mileage),
+    current_mileage: parseInt(mileage),
+    color: color,
+    vin: vin || null,
+    purchase_date: purchase_date || null
   };
 
   try {
@@ -38,28 +56,24 @@ async function handle_add_vehicle_submit(event) {
     const data = await response.json().catch(() => ({}));
 
     if (!response.ok) {
-      const msg = data.message || data.detail || "Failed to add vehicle.";
-      if (errorEl) {
-        errorEl.textContent = msg;
-        errorEl.hidden = false;
-      }
+      showError(data.message || "Failed to add vehicle.");
       return;
     }
 
-    window.location.href = "dashboard";
+    window.location.href = "/dashboard";
 
   } catch (err) {
     console.error(err);
-    if (errorEl) {
-      errorEl.textContent = "Network error. Please try again.";
-      errorEl.hidden = false;
-    }
+    showError("Network error. Please try again.");
+  }
+
+  function showError(msg) {
+    errorEl.hidden = false;
+    errorEl.textContent = msg;
   }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("add-vehicle-form");
-  if (form) {
-    form.addEventListener("submit", handle_add_vehicle_submit);
-  }
+  document.getElementById("add-vehicle-form")
+    .addEventListener("submit", handle_add_vehicle_submit);
 });

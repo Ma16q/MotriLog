@@ -1,4 +1,3 @@
-/* VARIABLES */
 :root {
     --white: #ffffff;
     --input-bg: #f5f5f7;
@@ -13,14 +12,11 @@ body.add-vehicle-page {
     margin: 0;
     padding: 0;
     height: 100vh;
-    font-family: var(--font);
-
     background-image: url("../img/car-interior.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-
-    position: relative;
+    font-family: var(--font);
 }
 
 /* LOGO (TOP LEFT) */
@@ -44,67 +40,103 @@ body.add-vehicle-page {
     right: 5%;
     top: 50%;
     transform: translateY(-50%);
+    width: 470px;
 
-    width: 450px;
     padding: 35px;
-
-    background: rgba(255, 255, 255, 0.96);
+    background: rgba(255, 255, 255, 0.97);
     border-radius: 20px;
-    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 8px 35px rgba(0, 0, 0, 0.25);
 }
 
+/* BACK BUTTON */
 .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    background: rgba(255,255,255,0.7);
+    border: 1px solid rgba(0,0,0,0.15);
+
+    padding: 8px 16px;
+    border-radius: 12px;
+
     font-size: 14px;
-    color: var(--blue);
+    font-weight: 500;
+    color: #007aff;
     text-decoration: none;
+
+    transition: 0.2s ease-in-out;
 }
 
+.back-link:hover {
+    background: rgba(255,255,255,0.95);
+}
+
+.back-link::before {
+    content: "←";
+    font-size: 16px;
+}
+
+/* TITLE */
 .title {
-    margin-top: 10px;
-    margin-bottom: 20px;
+    margin-top: 12px;
+    margin-bottom: 22px;
     font-size: 30px;
     font-weight: 700;
 }
 
-/* GRID LAYOUT */
+/* GRID */
 .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    gap: 22px 22px;
 }
 
 .full {
     grid-column: span 2;
 }
 
-/* INPUT STYLING */
-.form-group label {
-    font-size: 14px;
-    margin-bottom: 6px;
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
-input {
-    width: 100%;
+/* INPUTS */
+input, select {
     height: 48px;
     padding: 0 12px;
-
     border-radius: var(--radius);
-    border: 1px solid #ddd;
+    border: 1px solid #ccc;
     background: var(--input-bg);
+    font-size: 15px;
 }
 
 input::placeholder {
     color: var(--placeholder);
 }
 
+/* COLOR PICKER INLINE */
+.color-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#vehicle-color-picker {
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border: none;
+    background: none;
+}
+
 /* BUTTON */
 .btn-primary {
     width: 100%;
     height: 48px;
-
-    border-radius: var(--radius);
+    border-radius: 12px;
     border: none;
-
     background: linear-gradient(90deg, #0ac5d4, #007aff);
     color: white;
     font-size: 16px;
@@ -112,6 +144,7 @@ input::placeholder {
     cursor: pointer;
 }
 
+/* ERROR TEXT */
 .error-text {
     color: red;
     font-size: 14px;
