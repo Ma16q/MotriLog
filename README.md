@@ -1,74 +1,82 @@
-# System Requirements
+# MotariLog
 
-Before you begin, ensure you have the following installed on your system:
+MotariLog is a smart vehicle maintenance tracker that helps users monitor service history, predict maintenance needs, and locate nearby workshops.
 
-#### [Python 3.8+](https://www.python.org/)
+## System Requirements
 
-#### [Docker and Docker Compose](https://docs.docker.com/desktop/setup/install/windows-install/) (for running the database) 
+Ensure you have the following installed on your system:
+* [Python 3.9+](https://www.python.org/)
+* [Docker and Docker Compose](https://docs.docker.com/desktop/setup/install/windows-install/)
+
+---
 
 ## Installation
 
-Clone the repository:
-```
-git clone --branch=develop https://github.com/mkm72/Motari.git
-cd Motari
-```
+1.  **Clone the repository:**
+    ```bash
+    git clone --branch=develop [https://github.com/mkm72/Motari.git](https://github.com/mkm72/Motari.git)
+    cd Motari
+    ```
 
-Set up a Virtual Environment:
+2.  **Configuration:**
+    The application is configured to run out-of-the-box with default settings.
+    * **Database:** Connects to MongoDB via Docker service `mongo` (internal) or `localhost` (local dev).
+    * **Maps:** Uses Leaflet.js with OpenStreetMap. This requires **local database seeding** (see section below) instead of an API key.
 
-# Create virtual environment
-```
-python -m venv venv
-```
-# Activate virtual environment
+---
 
+## How to Run
 
-## On Windows:
-```
-venv\Scripts\activate
-```
-## On macOS/Linux:
-```
-source venv/bin/activate
-```
+You can run the application in two ways: **Full Docker Mode** (recommended) or **Local Development Mode**.
 
-Install Dependencies:
-Install the required Python packages listed in requirements.txt.
-```
-pip install -r requirements.txt
-```
+### Option 1: Full Docker Mode (Recommended)
+This starts both the MongoDB database and the Flask backend in synchronized containers.
 
+1.  **Build and Start:**
+    ```bash
+    docker-compose up --build
+    ```
+2.  **Access the App:**
+    Open your browser to: `http://127.0.0.1:5000`
+    
+    > **Note:** Use `127.0.0.1` instead of `localhost` to ensure authentication cookies work correctly.
 
-# How to Run
+### Option 2: Local Development Mode
+Use this if you want to edit Python code and see changes without rebuilding Docker containers.
 
-1. Start the Database
+1.  **Start ONLY the Database:**
+    ```bash
+    docker-compose up -d mongo
+    ```
+    *This starts MongoDB on port `27017`.*
 
-This project uses a MongoDB container defined in docker-compose.yml. You must start this container before running the Flask application.
+2.  **Set up Python Environment:**
+    ```bash
+    # Create virtual environment
+    python -m venv venv
 
-Run the following command in the project root:
-```
-docker-compose up -d
-```
+    # Activate virtual environment
+    # Windows:
+    venv\Scripts\activate
+    # macOS/Linux:
+    source venv/bin/activate
+    ```
 
+3.  **Install Dependencies:**
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-This will start a MongoDB container named ```motarilog_db```.
+4.  **Run the Application:**
+    ```bash
+    # Ensure Flask knows to connect to localhost, not the docker service name
+    # Linux/Mac:
+    export MONGO_URI="mongodb://localhost:27017/motarilog"
+    # Windows CMD:
+    set MONGO_URI=mongodb://localhost:27017/motarilog
 
-The database listens on port ```27017```.
+    python run.py
+    ```
+    The application will start in debug mode at `http://127.0.0.1:5000`.
 
-Data is persisted in a docker volume named ```motarilog-data```.
-
-2. Start the Flask Application
-
-Once the database is running, you can start the Python backend.
-```
-python run.py
-```
-
-
-The application will start in debug mode and will be accessible at:
-```http://localhost:5000```
-
-
-
-
-
+---
