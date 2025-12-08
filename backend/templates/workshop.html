@@ -4,23 +4,58 @@
     <meta charset="UTF-8" />
     <title>MotriLog – Workshops</title>
 
-    <!-- Leaflet CSS -->
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
     />
-
-    <link rel="stylesheet" href="../static/css/workshops.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/workshops.css') }}" />
   </head>
 
   <body class="workshops-page">
+    
+    {% if user_role == 'admin' %}
+    <div id="admin-panel" style="
+        position: absolute; 
+        top: 80px; 
+        left: 50%; 
+        transform: translateX(-50%); 
+        z-index: 1000; 
+        background: white; 
+        padding: 15px; 
+        border-radius: 8px; 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2); 
+        width: 90%; 
+        max-width: 600px; 
+        border: 2px solid #ff4757;">
+        
+        <h3 style="margin: 0 0 10px 0; color: #ff4757;">👑 Admin: Add Workshop</h3>
+        
+        <form id="addWorkshopForm" style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <input type="text" id="w_name" placeholder="Workshop Name" required style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+            <input type="text" id="w_address" placeholder="Address" required style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+            
+            <input type="hidden" id="w_lat">
+            <input type="hidden" id="w_lng">
+
+            <button type="button" id="btn-pick-location" style="background: #eee; border: 1px dashed #333; padding: 8px 15px; border-radius: 4px; cursor: pointer;">
+                📍 Pick on Map
+            </button>
+            
+            <button type="submit" style="background: #ff4757; color: white; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                Save
+            </button>
+        </form>
+        <div id="location-status" style="font-size: 0.8em; color: green; margin-top: 5px; display: none;">✓ Location selected!</div>
+    </div>
+    {% endif %}
+
     <div id="map"></div>
 
     <header class="app-header">
       <a href="/" class="brand-logo">MotriLog</a>
 
       <div class="header-actions">
-        <a href="/dashboard" class="btn-ghost small">← Back</a>
+        <a href="{{ url_for('web_bp.dashboard') }}" class="btn-ghost small">← Back</a>
         <button id="logout-btn" class="btn-ghost">Logout</button>
       </div>
     </header>
@@ -36,27 +71,26 @@
       </div>
 
       <div class="chip-row" id="chip-row">
-        <button class="chip chip-active" data-service="oil_change">
-          Oil Change
-        </button>
-        <button class="chip" data-service="tire">Tire Services</button>
-        <button class="chip" data-service="general">General Service</button>
+        <button class="chip chip-active" data-service="all">All</button>
+        <button class="chip" data-service="oil_change">Oil Change</button>
+        <button class="chip" data-service="tire">Tires</button>
+        <button class="chip" data-service="general">General</button>
         <button class="chip" data-service="ac">AC Repair</button>
       </div>
 
       <h3 class="list-title">Nearby Workshops</h3>
-      <ul class="workshop-list" id="workshop-list"></ul>
+      <ul class="workshop-list" id="workshop-list">
+        </ul>
 
       <button id="directions-btn" class="btn-primary full mt-16">
         Get Directions
       </button>
     </div>
 
-    <script src="../static/js/auth.js"></script>
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
 
-    <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
 
-    <script src="../static/js/workshops.js"></script>
+    <script src="{{ url_for('static', filename='js/workshops.js') }}"></script>
   </body>
 </html>

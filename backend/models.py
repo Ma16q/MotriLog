@@ -1,5 +1,5 @@
-
 import os
+import bcrypt
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from marshmallow import Schema, fields, validate, ValidationError
@@ -7,11 +7,11 @@ from datetime import datetime
 
 # --- Database Connection ---
 
-MONGO_URI = os.environ.get("MONGO_URI", "mongodb://localhost:27017/motarilog") # change me
+MONGO_URI = os.environ.get("MONGO_URI", "mongodb://localhost:27017/motarilog")
 client = MongoClient(MONGO_URI)
-
 db = client.get_database()
 
+# --- Custom Fields ---
 
 class ObjectIdField(fields.Field):
     def _serialize(self, value, attr, obj, **kwargs):
@@ -25,11 +25,12 @@ class ObjectIdField(fields.Field):
         except Exception as e:
             raise ValidationError("Invalid ObjectId.") from e
 
+# --- Schemas ---
 
 class UserSchema(Schema):
     _id = ObjectIdField(dump_only=True)
     email = fields.Email(required=True)
-    password_hash = fields.String(required=True, load_only=True) # load_only = never send in API response
+    password_hash = fields.String(required=True, load_only=True)
     full_name = fields.String(required=True)
     phone_number = fields.String(required=False, allow_none=True)
     telegram_chat_id = fields.String(load_default=None)
@@ -133,7 +134,7 @@ class WorkshopSchema(Schema):
     _id = ObjectIdField(dump_only=True)
     name = fields.String(required=True)
     address = fields.Nested(AddressSchema, required=True)
-    location = fields.Nested(LocationSchema, required=True) # 
+    location = fields.Nested(LocationSchema, required=True) 
     phone_number = fields.String(required=False, allow_none=True)
     services_offered = fields.List(fields.String(), required=False, allow_none=True)
     operating_hours = fields.String(required=False, allow_none=True)
@@ -151,6 +152,7 @@ class SessionSchema(Schema):
     val = fields.Raw(required=True)
     expireAt = fields.DateTime(required=True)
 
+# --- Initialize Schemas ---
 
 user_schema = UserSchema()
 vehicle_schema = VehicleSchema()
@@ -160,7 +162,7 @@ accident_history_schema = AccidentHistorySchema()
 workshop_schema = WorkshopSchema()
 session_schema = SessionSchema()
 
-
+# --- Database Initialization ---
 
 def initialize_database():
     try:
@@ -193,5 +195,34 @@ def initialize_database():
 
         print("Database initialized and indexes ensured.")
         
+        # --- Create/Update Default Admin Account ---
+        # We need to make sure the password matches what 'auth.py' expects (bcrypt)
+        admin_email = "admin@motarilog.com"
+        admin_pass_raw = "admin123"
+        
+        # Generate valid bcrypt hash
+        hashed_pw_bytes = bcrypt.hashpw(admin_pass_raw.encode('utf-8'), bcrypt.gensalt())
+        hashed_pw_str = hashed_pw_bytes.decode('utf-8')
+
+        admin_user = db.users.find_one({"email": admin_email})
+        
+        if not admin_user:
+            print("⚡ Creating default Admin account...")
+            db.users.insert_one({
+                "name": "System Admin",
+                "email": admin_email,
+                "password_hash": hashed_pw_str, 
+                "role": "admin",  
+                "created_at": datetime.utcnow(),
+                "is_active": True
+            })
+        else:
+            # FIX: Force update the password to ensure it's valid bcrypt
+            db.users.update_one(
+                {"email": admin_email},
+                {"$set": {"password_hash": hashed_pw_str}}
+            )
+            print("✔ Admin account exists (Password synced).")
+
     except Exception as e:
         print(f"Error initializing database: {e}")

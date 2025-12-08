@@ -14,14 +14,14 @@ Ensure you have the following installed on your system:
 
 1.  **Clone the repository:**
     ```bash
-    git clone --branch=develop https://github.com/mkm72/Motari.git
+    git clone --branch=develop [https://github.com/mkm72/Motari.git](https://github.com/mkm72/Motari.git)
     cd Motari
     ```
 
 2.  **Configuration:**
     The application is configured to run out-of-the-box with default settings.
     * **Database:** Connects to MongoDB via Docker service `mongo` (internal) or `localhost` (local dev).
-    * **Maps:** Uses Leaflet.js with OpenStreetMap. This requires **local database seeding** (see section below) instead of an API key.
+    * **Maps:** Uses Leaflet.js with OpenStreetMap. This requires the admin to pin locations manually (see section below) instead of using a paid API key.
 
 ---
 
@@ -80,3 +80,12 @@ Use this if you want to edit Python code and see changes without rebuilding Dock
     The application will start in debug mode at `http://127.0.0.1:5000`.
 
 ---
+
+## Admin Access & Workshop Management
+
+The system automatically creates a default administrator account on the first launch. This account has exclusive access to manage workshop locations on the map.
+
+**Default Credentials:**
+* **Email:** `admin@motarilog.com`
+* **Password:** `admin123`
+

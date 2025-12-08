@@ -1,201 +1,206 @@
-// ===============================
-// STATIC WORKSHOPS DATABASE (Khobar)
-// ===============================
-const WORKSHOPS_DATA = {
-  oil_change: [
-    {
-      name: "Quick Lube – Khobar",
-      lat: 26.299,
-      lng: 50.196,
-      rating: 4.6
-    },
-    {
-      name: "Fast Oil Center",
-      lat: 26.305,
-      lng: 50.215,
-      rating: 4.4
-    }
-  ],
-
-  tire: [
-    {
-      name: "Tire Pro – Khobar",
-      lat: 26.301,
-      lng: 50.21,
-      rating: 4.4
-    },
-    {
-      name: "Al Saif Tires",
-      lat: 26.295,
-      lng: 50.205,
-      rating: 4.5
-    }
-  ],
-
-  general: [
-    {
-      name: "Khobar Auto Garage",
-      lat: 26.297,
-      lng: 50.203,
-      rating: 4.3
-    },
-    {
-      name: "MasterFix Garage",
-      lat: 26.31,
-      lng: 50.22,
-      rating: 4.2
-    }
-  ],
-
-  ac: [
-    {
-      name: "AC Specialist Garage – Khobar",
-      lat: 26.300,
-      lng: 50.210,
-      rating: 4.7
-    },
-    {
-      name: "ColdAir AC Repair",
-      lat: 26.293,
-      lng: 50.207,
-      rating: 4.6
-    }
-  ]
-};
-
-// -------------------------------------
-//  WORKSHOPS LIST (Al Khobar)
-// -------------------------------------
-const WORKSHOPS = [
-  { name: "Quick Lane - Al Khobar", lat: 26.305983, lng: 50.196174, rating: 4.6, service: "oil_change" },
-  { name: "Petromin Express – Al Aqrabiyah", lat: 26.297421, lng: 50.196973, rating: 4.3, service: "oil_change" },
-  { name: "Bridgestone Tire Center – Khobar", lat: 26.299315, lng: 50.204191, rating: 4.4, service: "tire" },
-  { name: "Goodyear Service Center", lat: 26.289712, lng: 50.210132, rating: 4.0, service: "tire" },
-  { name: "AC Specialist Garage – Khobar", lat: 26.306412, lng: 50.197982, rating: 4.7, service: "ac" },
-  { name: "Precision Auto Repair", lat: 26.295974, lng: 50.215081, rating: 4.5, service: "general" },
-  { name: "Al Mamlaka Auto Workshop", lat: 26.290832, lng: 50.207462, rating: 4.2, service: "general" },
-  { name: "AC ProFix Center", lat: 26.302118, lng: 50.210772, rating: 4.8, service: "ac" },
-  { name: "Michelin Tires – Khobar", lat: 26.303891, lng: 50.204112, rating: 4.1, service: "tire" },
-  { name: "Experts Auto Garage", lat: 26.294101, lng: 50.201912, rating: 4.6, service: "general" }
-];
-
+// --- Global Variables ---
 let map;
-let userMarker;
-let workshopMarkers = [];
-let selectedWorkshop = null;
-let selectedCategory = "oil_change";
+let markersLayer = new L.LayerGroup();
 
-// -------------------------------------
-// INIT MAP
-// -------------------------------------
-document.addEventListener("DOMContentLoaded", () => {
-  map = L.map("map").setView([26.3032, 50.1968], 13); // Khobar center
+// --- 1. Initialize Map (Runs immediately) ---
+function initMap() {
+    // 1. Create Map (Default Center: Riyadh)
+    map = L.map('map').setView([24.7136, 46.6753], 13);
 
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19,
-  }).addTo(map);
+    // 2. Add Tile Layer (The Map Images)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
 
-  renderWorkshopList(WORKSHOPS);
-  placeMarkers(WORKSHOPS);
-});
+    // 3. Add Marker Layer
+    markersLayer.addTo(map);
 
-// -------------------------------------
-// PLACE WORKSHOP MARKERS
-// -------------------------------------
-function placeMarkers(list) {
-  workshopMarkers.forEach(m => map.removeLayer(m));
-  workshopMarkers = [];
+    // 4. Try to get User Location
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                
+                // Move map to user
+                map.setView([lat, lng], 14);
+                
+                // Add "You are here" blue dot
+                L.circleMarker([lat, lng], {
+                    radius: 8,
+                    fillColor: "#3388ff",
+                    color: "#fff",
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                }).addTo(map).bindPopup("You are here");
 
-  list.forEach(workshop => {
-    const marker = L.marker([workshop.lat, workshop.lng]).addTo(map);
-
-    marker.bindPopup(`
-      <b>${workshop.name}</b><br>
-      ⭐ ${workshop.rating}
-    `);
-
-    marker.on("click", () => {
-      selectedWorkshop = workshop;
-      highlightWorkshop(workshop.name);
-    });
-
-    workshopMarkers.push(marker);
-  });
-}
-
-// -------------------------------------
-// LIST RENDER
-// -------------------------------------
-function renderWorkshopList(list) {
-  const container = document.getElementById("workshop-list");
-  container.innerHTML = "";
-
-  list.forEach(w => {
-    const li = document.createElement("li");
-    li.className = "workshop-item";
-    li.innerHTML = `
-      <h4>${w.name}</h4>
-      <p class="muted">⭐ ${w.rating}</p>
-    `;
-    
-    li.addEventListener("click", () => {
-      selectedWorkshop = w;
-      map.setView([w.lat, w.lng], 16);
-      highlightWorkshop(w.name);
-    });
-
-    container.appendChild(li);
-  });
-}
-
-function highlightWorkshop(name) {
-  document.querySelectorAll(".workshop-item").forEach(item => {
-    item.classList.remove("selected");
-    if (item.querySelector("h4").textContent === name) {
-      item.classList.add("selected");
+                // Load workshops around user
+                fetchWorkshops(lat, lng);
+            },
+            () => {
+                console.log("GPS denied. Loading default view.");
+                fetchWorkshops(24.7136, 46.6753);
+            }
+        );
+    } else {
+        fetchWorkshops(24.7136, 46.6753);
     }
-  });
 }
 
-// -------------------------------------
-// SEARCH BAR
-// -------------------------------------
-document.getElementById("search-input").addEventListener("input", e => {
-  const q = e.target.value.toLowerCase();
-  const filtered = WORKSHOPS.filter(w =>
-    w.name.toLowerCase().includes(q)
-  );
+// --- 2. Fetch Data from Backend ---
+async function fetchWorkshops(lat, lng) {
+    markersLayer.clearLayers();
+    
+    const listContainer = document.getElementById('workshop-list');
+    if (listContainer) listContainer.innerHTML = '<p style="padding:10px;">Loading...</p>';
 
-  renderWorkshopList(filtered);
-  placeMarkers(filtered);
-});
+    try {
+        // Search radius: 50km
+        const response = await fetch(`/workshops/nearby?lat=${lat}&lng=${lng}&radius=50000`);
+        const data = await response.json();
 
-// -------------------------------------
-// CATEGORY FILTER
-// -------------------------------------
-document.querySelectorAll(".chip").forEach(chip => {
-  chip.addEventListener("click", () => {
-    document.querySelectorAll(".chip").forEach(c => c.classList.remove("chip-active"));
-    chip.classList.add("chip-active");
+        if (listContainer) listContainer.innerHTML = '';
 
-    selectedCategory = chip.dataset.service;
+        if (!data.workshops || data.workshops.length === 0) {
+            if (listContainer) listContainer.innerHTML = '<p style="padding:10px;">No workshops found nearby.</p>';
+            return;
+        }
 
-    const filtered = WORKSHOPS.filter(w => w.service === selectedCategory);
+        data.workshops.forEach(workshop => {
+            // Flip coordinates: MongoDB is [Lng, Lat], Leaflet needs [Lat, Lng]
+            const wLat = workshop.location.coordinates[1];
+            const wLng = workshop.location.coordinates[0];
 
-    renderWorkshopList(filtered);
-    placeMarkers(filtered);
-  });
-});
+            // Add Pin to Map
+            const marker = L.marker([wLat, wLng])
+                .bindPopup(`
+                    <b>${workshop.name}</b><br>
+                    ${workshop.address}<br>
+                    ⭐ ${workshop.rating}
+                `);
+            
+            markersLayer.addLayer(marker);
 
-// -------------------------------------
-// GET DIRECTIONS BUTTON
-// -------------------------------------
-document.getElementById("directions-btn").addEventListener("click", () => {
-  if (!selectedWorkshop) {
-    alert("Select a workshop first!");
-    return;
-  }
+            // Add to Sidebar List
+            if (listContainer) {
+                const li = document.createElement('li');
+                li.className = 'workshop-item';
+                li.innerHTML = `
+                    <div class="w-info">
+                        <strong>${workshop.name}</strong>
+                        <p>${workshop.address}</p>
+                    </div>
+                    <div class="w-rating">⭐ ${workshop.rating}</div>
+                `;
+                // Clicking the list item zooms to the pin
+                li.addEventListener('click', () => {
+                    map.setView([wLat, wLng], 16);
+                    marker.openPopup();
+                });
+                listContainer.appendChild(li);
+            }
+        });
 
-  const url = `https://www.google.com/maps/dir/?api=1&destination=${selectedWorkshop.lat},${selectedWorkshop.lng}`;
-  window.open(url, "_blank");
+    } catch (err) {
+        console.error("Error loading workshops:", err);
+    }
+}
+
+// --- 3. Admin Logic (Safe Mode) ---
+function setupAdminFeatures() {
+    const adminForm = document.getElementById('addWorkshopForm');
+    const pickBtn = document.getElementById('btn-pick-location');
+    let isPicking = false;
+    let tempMarker = null;
+
+    // Only run this if the Admin Panel actually exists
+    if (pickBtn && adminForm) {
+        
+        // Button Click
+        pickBtn.addEventListener('click', () => {
+            isPicking = true;
+            pickBtn.innerText = "👇 Click map to set pin";
+            pickBtn.style.background = "#fff3cd";
+        });
+
+        // Map Click (Using the global map variable)
+        map.on('click', (e) => {
+            if (!isPicking) return;
+
+            const { lat, lng } = e.latlng;
+
+            // Fill Form
+            document.getElementById('w_lat').value = lat;
+            document.getElementById('w_lng').value = lng;
+            
+            // Auto-fill Address if empty
+            const addrField = document.getElementById('w_address');
+            if (!addrField.value) {
+                addrField.value = `Location: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+            }
+
+            // Visual Marker
+            if (tempMarker) map.removeLayer(tempMarker);
+            tempMarker = L.marker([lat, lng]).addTo(map).bindPopup("New Location").openPopup();
+
+            // Reset UI
+            isPicking = false;
+            pickBtn.innerText = "✓ Location Set";
+            pickBtn.style.background = "#d4edda";
+        });
+
+        // Form Submit
+        adminForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const lat = document.getElementById('w_lat').value;
+            const lng = document.getElementById('w_lng').value;
+
+            if (!lat || !lng) {
+                alert("Please click 'Pick on Map' first!");
+                return;
+            }
+
+            const payload = {
+                name: document.getElementById('w_name').value,
+                address: document.getElementById('w_address').value,
+                lat: lat,
+                lng: lng,
+                services: ['general_repair']
+            };
+
+            try {
+                const res = await fetch('/workshops/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (res.ok) {
+                    alert('Workshop Saved!');
+                    fetchWorkshops(lat, lng); // Refresh map
+                    adminForm.reset();
+                    pickBtn.innerText = "📍 Pick on Map";
+                    pickBtn.style.background = "#eee";
+                    if (tempMarker) map.removeLayer(tempMarker);
+                } else {
+                    const d = await res.json();
+                    alert('Error: ' + d.error);
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Connection Error');
+            }
+        });
+    }
+}
+
+// --- 4. Start Everything ---
+document.addEventListener("DOMContentLoaded", () => {
+    // 1. Load Map first
+    initMap();
+    
+    // 2. Load Admin features (if logged in as admin)
+    setupAdminFeatures();
 });

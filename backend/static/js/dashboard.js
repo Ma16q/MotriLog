@@ -1,5 +1,7 @@
 console.log("DASHBOARD.JS LOADED!");
 
+// --- Part 1: Vehicle Logic ---
+
 async function fetch_and_display_vehicles() {
   const container = document.getElementById("vehicles-list");
   if (!container) return;
@@ -7,9 +9,8 @@ async function fetch_and_display_vehicles() {
   container.innerHTML = "<p>Loading vehicles...</p>";
 
   try {
-    const response = await fetch(`${API_BASE_URL}/api/vehicles`, {
+    const response = await fetch(`/api/vehicles`, {
       method: "GET",
-      credentials: "include",
       headers: { "Content-Type": "application/json" }
     });
 
@@ -48,8 +49,6 @@ async function fetch_and_display_vehicles() {
     document.querySelectorAll(".view-btn").forEach(btn => {
       btn.addEventListener("click", () => {
         const id = btn.getAttribute("data-id");
-
-        // ✔ correct route from web.py 
         window.location.href = `/vehicle-details?id=${id}`;
       });
     });
@@ -60,4 +59,86 @@ async function fetch_and_display_vehicles() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", fetch_and_display_vehicles);
+// --- Part 2: Admin Workshop Logic ---
+
+function setupAdminPanel() {
+  const workshopForm = document.getElementById('addWorkshopForm');
+  const locationBtn = document.getElementById('btn-get-location');
+
+  // If the admin form doesn't exist (because user is not admin), stop here.
+  if (!workshopForm) return; 
+
+  console.log("Admin Panel Detected: Initializing...");
+
+  // Handle Form Submit
+  workshopForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const submitBtn = workshopForm.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerText;
+    submitBtn.innerText = "Saving...";
+    submitBtn.disabled = true;
+
+    const workshopData = {
+      name: document.getElementById('w_name').value,
+      address: document.getElementById('w_address').value,
+      lat: document.getElementById('w_lat').value,
+      lng: document.getElementById('w_lng').value,
+      services: ['general_repair'] 
+    };
+
+    try {
+      const response = await fetch('/workshops/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(workshopData)
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert('✅ Workshop Added Successfully!');
+        workshopForm.reset();
+      } else {
+        alert('❌ Error: ' + (result.error || 'Unknown error'));
+      }
+    } catch (err) {
+      console.error(err);
+      alert('❌ Failed to connect to server');
+    } finally {
+      submitBtn.innerText = originalText;
+      submitBtn.disabled = false;
+    }
+  });
+
+  // Handle "Detect Location" Button
+  if (locationBtn) {
+    locationBtn.addEventListener('click', () => {
+      if (!navigator.geolocation) {
+        alert("Geolocation is not supported by your browser.");
+        return;
+      }
+
+      locationBtn.innerText = "Locating...";
+      
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          document.getElementById('w_lat').value = position.coords.latitude;
+          document.getElementById('w_lng').value = position.coords.longitude;
+          locationBtn.innerText = "📍 Location Set!";
+          setTimeout(() => locationBtn.innerText = "📍 Detect My Location", 2000);
+        },
+        (error) => {
+          alert("Unable to retrieve location. Please enter coordinates manually.");
+          locationBtn.innerText = "📍 Detect My Location";
+        }
+      );
+    });
+  }
+}
+
+// --- Initialize ---
+document.addEventListener("DOMContentLoaded", () => {
+  fetch_and_display_vehicles();
+  setupAdminPanel();
+});
