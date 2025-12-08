@@ -1,40 +1,7 @@
 console.log("AUTH.JS LOADED!");
 
-// Using session cookies with Flask API
 const API_BASE_URL = "http://127.0.0.1:5000";
-function setupPasswordToggle(inputId, toggleId) {
-    const passwordInput = document.getElementById(inputId);
-    const toggleIcon = document.getElementById(toggleId);
 
-    if (passwordInput && toggleIcon) {
-        toggleIcon.addEventListener("click", function () {
-            const type =
-                passwordInput.getAttribute("type") === "password"
-                    ? "text"
-                    : "password";
-            passwordInput.setAttribute("type", type);
-            this.textContent = type === "password" ? "👁️" : "🔒";
-        });
-    }
-}
-
-function checkNameForNumbers(inputId, errorId) {
-    const input = document.getElementById(inputId);
-    const error = document.getElementById(errorId);
-    const nameRegex = /^\D*$/;
-
-    if (input && error) {
-        input.addEventListener("input", function () {
-            if (!nameRegex.test(this.value)) {
-                error.textContent = "Name cannot contain numbers.";
-                error.removeAttribute("hidden");
-            } else {
-                error.setAttribute("hidden", "");
-                error.textContent = "";
-            }
-        });
-    }
-}
 // ------------------------------------------------------------
 // LOGIN
 // ------------------------------------------------------------
@@ -52,7 +19,7 @@ async function handle_login_submit(event) {
 
   const payload = {
     email: emailInput.value.trim(),
-    password: passwordInput.value
+    password: passwordInput.value,
   };
 
   try {
@@ -60,7 +27,7 @@ async function handle_login_submit(event) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
 
     const data = await response.json().catch(() => ({}));
@@ -72,13 +39,13 @@ async function handle_login_submit(event) {
       return;
     }
 
-    // Session cookie is now set
     window.location.href = "/dashboard";
-
   } catch (err) {
     console.error("Login error:", err);
-    errorEl.textContent = "Network error. Please try again.";
-    errorEl.hidden = false;
+    if (errorEl) {
+      errorEl.textContent = "Network error. Please try again.";
+      errorEl.hidden = false;
+    }
   }
 }
 
@@ -88,57 +55,71 @@ async function handle_login_submit(event) {
 async function handle_register_submit(event) {
   event.preventDefault();
 
-  const firstNameInput = document.getElementById("reg-first-name") || document.getElementById("first-name");
-  const lastNameInput = document.getElementById("reg-last-name") || document.getElementById("last-name");
+  const firstNameInput =
+    document.getElementById("reg-first-name") ||
+    document.getElementById("first-name");
+  const lastNameInput =
+    document.getElementById("reg-last-name") ||
+    document.getElementById("last-name");
   const emailInput = document.getElementById("reg-email");
   const phoneInput = document.getElementById("reg-phone");
   const passwordInput = document.getElementById("reg-password");
-  const confirmPasswordInput = document.getElementById("reg-password-confirm");
+  const confirmPasswordInput = document.getElementById(
+    "reg-password-confirm"
+  );
   const termsCheckbox = document.getElementById("terms");
   const errorEl = document.getElementById("register-error");
 
-  // Reset errors
-  errorEl.hidden = true;
-  errorEl.textContent = "";
+  if (errorEl) {
+    errorEl.hidden = true;
+    errorEl.textContent = "";
+  }
 
   let hasError = false;
 
-  // Validations
   const nameRegex = /[0-9]/;
-  if (nameRegex.test(firstNameInput.value) || nameRegex.test(lastNameInput.value)) {
-    errorEl.textContent = "First or Last Name cannot contain numbers.";
-    errorEl.hidden = false;
+  if (
+    nameRegex.test(firstNameInput.value) ||
+    nameRegex.test(lastNameInput.value)
+  ) {
+    if (errorEl) {
+      errorEl.textContent = "First or Last Name cannot contain numbers.";
+      errorEl.hidden = false;
+    }
     hasError = true;
   }
 
   if (passwordInput.value.length < 8) {
-    errorEl.textContent = "Password must be at least 8 characters long.";
-    errorEl.hidden = false;
+    if (errorEl) {
+      errorEl.textContent = "Password must be at least 8 characters long.";
+      errorEl.hidden = false;
+    }
     hasError = true;
   }
-    
-  if (hasError) {
-      return;
-  }
-  
+
+  if (hasError) return;
+
   if (passwordInput.value !== confirmPasswordInput.value) {
-    errorEl.textContent = "Passwords do not match.";
-    errorEl.hidden = false;
+    if (errorEl) {
+      errorEl.textContent = "Passwords do not match.";
+      errorEl.hidden = false;
+    }
     return;
   }
 
   if (!termsCheckbox.checked) {
-    errorEl.textContent = "You must agree to the terms.";
-    errorEl.hidden = false;
+    if (errorEl) {
+      errorEl.textContent = "You must agree to the terms.";
+      errorEl.hidden = false;
+    }
     return;
   }
 
   const payload = {
     email: emailInput.value.trim(),
-    // FIX: Changed 'password' to 'password_hash' to match Backend Schema
-    password_hash: passwordInput.value, 
+    password_hash: passwordInput.value,
     full_name: `${firstNameInput.value.trim()} ${lastNameInput.value.trim()}`,
-    phone_number: phoneInput.value.trim() || null
+    phone_number: phoneInput.value.trim() || null,
   };
 
   try {
@@ -146,37 +127,39 @@ async function handle_register_submit(event) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
 
     const data = await response.json().catch(() => ({}));
 
     if (!response.ok) {
-        let msg = data.message || data.detail || "Registration failed.";
-        
-        // Handle specific dictionary errors from Marshmallow
-        if (typeof data === 'object' && !data.message && !data.detail) {
-             msg = JSON.stringify(data).replace(/[{"}\[\]]/g, '').replace(/:/g, ': ');
-        }
+      let msg = data.message || data.detail || "Registration failed.";
 
-        if (msg.includes("Email already exists")) {
-            msg = "This email address is already registered. Please login.";
-        } else if (msg.includes("passwords do not match")) {
-            msg = "The passwords you entered do not match.";
-        }
+      if (typeof data === "object" && !data.message && !data.detail) {
+        msg = JSON.stringify(data)
+          .replace(/[{"}\[\]]/g, "")
+          .replace(/:/g, ": ");
+      }
 
+      if (msg.includes("Email already exists")) {
+        msg = "This email address is already registered. Please login.";
+      }
+
+      if (errorEl) {
         errorEl.textContent = msg;
         errorEl.hidden = false;
-        return;
+      }
+
+      return;
     }
 
-    // Redirect to login on success
     window.location.href = "/login";
-
   } catch (err) {
     console.error("Register error:", err);
-    errorEl.textContent = "Network error. Please try again.";
-    errorEl.hidden = false;
+    if (errorEl) {
+      errorEl.textContent = "Network error. Please try again.";
+      errorEl.hidden = false;
+    }
   }
 }
 
@@ -187,79 +170,62 @@ async function logout() {
   try {
     await fetch(`${API_BASE_URL}/api/logout`, {
       method: "POST",
-      credentials: "include"
+      credentials: "include",
     });
   } catch (e) {
-    console.warn("Logout request failed (ignored)", e);
+    console.warn("Logout request failed:", e);
   }
 
   window.location.href = "/login";
 }
 
 // ------------------------------------------------------------
+// Check authentication for Main_Page navbar
+// ------------------------------------------------------------
+async function updateHomeNavbar() {
+  const loginBtn = document.getElementById("home-login-btn");
+  const registerBtn = document.getElementById("home-register-btn");
+
+  if (!loginBtn) return;
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/profile`, {
+      credentials: "include",
+    });
+
+    if (res.ok) {
+      loginBtn.textContent = "Dashboard";
+      loginBtn.href = "/dashboard";
+      if (registerBtn) registerBtn.style.display = "none";
+    } else {
+      loginBtn.textContent = "Login";
+      loginBtn.href = "/login";
+      if (registerBtn) registerBtn.style.display = "inline-block";
+    }
+  } catch (err) {
+    console.warn("Auth check failed:", err);
+  }
+}
+
+// ------------------------------------------------------------
 // EVENT LISTENERS
 // ------------------------------------------------------------
-
 document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("login-form");
-  if (loginForm) loginForm.addEventListener("submit", handle_login_submit);
+  if (loginForm)
+    loginForm.addEventListener("submit", handle_login_submit);
 
   const registerForm = document.getElementById("register-form");
-  if (registerForm) registerForm.addEventListener("submit", handle_register_submit);
+  if (registerForm)
+    registerForm.addEventListener("submit", handle_register_submit);
 
   const logoutButtons = document.querySelectorAll("#logout-btn");
-  logoutButtons.forEach(btn => {
+  logoutButtons.forEach((btn) => {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
       logout();
     });
   });
-});
 
-document.addEventListener("DOMContentLoaded", () => {
-    setupPasswordToggle("reg-password", "toggle-password");
-    setupPasswordToggle("reg-password-confirm", "toggle-confirm-password");
-    setupPasswordToggle("login-password", "toggle-login-password"); 
-
-    checkNameForNumbers("first-name", "first-name-error");
-    checkNameForNumbers("last-name", "last-name-error");
-
-    const registerForm = document.getElementById("register-form");
-    if (registerForm) {
-        registerForm.addEventListener("submit", function (event) {
-            
-            const password = document.getElementById("reg-password");
-            const confirmPassword = document.getElementById("reg-password-confirm");
-            const lengthError = document.getElementById("password-length-error"); 
-            const matchError = document.getElementById("password-match-error"); 
-            const generalError = document.getElementById("register-error");
-
-            let isValid = true;
-   
-            if (password.value.length < 8) {
-                lengthError.removeAttribute("hidden");
-                password.focus();
-                isValid = false;
-            } else {
-                lengthError.setAttribute("hidden", "");
-            }
-
-            if (password.value !== confirmPassword.value) {
-                matchError.removeAttribute("hidden");
-                confirmPassword.focus();
-                isValid = false;
-            } else {
-                matchError.setAttribute("hidden", "");
-            }
-
-            if (!isValid) {
-                event.preventDefault();
-                generalError.textContent = "Please fix the errors shown above.";
-                generalError.removeAttribute("hidden");
-                return; 
-            } 
-            
-           
-        });
-    }
+  updateHomeNavbar();
 });

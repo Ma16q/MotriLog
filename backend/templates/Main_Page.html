@@ -5,151 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MotriLog</title>
 
-    <style>
-      body {
-        margin: 0;
-        font-family: "Inter", sans-serif;
-        background-color: #f5f6f7;
-      }
-
-      /* ---------------- NAVBAR ---------------- */
-      .navbar {
-        width: 100%;
-        padding: 20px 80px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background-color: white;
-        border-bottom: 1px solid #e5e7eb;
-      }
-
-      .logo {
-        font-size: 26px;
-        font-weight: 700;
-        color: #1a3e75;
-      }
-
-      .nav-links {
-        display: flex;
-        align-items: center;
-        gap: 30px;
-      }
-
-      .nav-links a {
-        text-decoration: none;
-        color: #4b5563;
-        font-size: 16px;
-        font-weight: 500;
-      }
-
-      .login-btn {
-        padding: 8px 18px;
-        background-color: #1d8cff;
-        color: white !important;
-        border-radius: 6px;
-        font-weight: 600;
-      }
-
-      .register-btn {
-        padding: 8px 18px;
-        background-color: #e2e8f0;
-        border-radius: 6px;
-        font-weight: 600;
-        color: #1a3e75 !important;
-      }
-
-      /* ---------------- HERO SECTION ---------------- */
-      .hero {
-        width: 100%;
-        height: 350px;
-        background: url("/static/img/hamepage.jpg") center/cover no-repeat;
-        position: relative;
-      }
-
-      .hero-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.45);
-      }
-
-      .hero-content {
-        position: absolute;
-        top: 50%;
-        left: 8%;
-        transform: translateY(-50%);
-        color: white;
-      }
-
-      .hero-content h1 {
-        font-size: 36px;
-        font-weight: 700;
-        margin: 0;
-      }
-
-      .hero-content p {
-        margin-top: 10px;
-        font-size: 18px;
-        opacity: 0.9;
-      }
-
-      /* ---------------- FEATURES SECTION ---------------- */
-      .features {
-        display: flex;
-        justify-content: center;
-        gap: 30px;
-        padding: 50px 0;
-      }
-
-      .feature-card {
-        background: white;
-        width: 280px;
-        padding: 30px;
-        border-radius: 16px;
-        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.08);
-        text-align: center;
-      }
-
-      .feature-card img {
-        width: 45px;
-        margin-bottom: 15px;
-      }
-
-      .feature-card h3 {
-        font-size: 20px;
-        margin-bottom: 8px;
-        color: #111827;
-      }
-
-      .feature-card p {
-        color: #6b7280;
-        font-size: 15px;
-        line-height: 22px;
-      }
-
-      /* ---------------- FOOTER ---------------- */
-      .footer {
-        background-color: #1f2937;
-        color: #d1d5db;
-        padding: 30px 0;
-        text-align: center;
-        margin-top: 30px;
-      }
-
-      .footer a {
-        margin: 0 10px;
-        color: #d1d5db;
-        text-decoration: none;
-        font-size: 14px;
-      }
-
-      .footer-icons img {
-        width: 22px;
-        margin: 0 6px;
-      }
-    </style>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/main_page.css') }}"
+    />
+    <script
+      defer
+      src="{{ url_for('static', filename='js/main_page.js') }}"
+    ></script>
   </head>
 
   <body>
@@ -158,28 +21,33 @@
       <div class="logo">MotriLog</div>
 
       <div class="nav-links">
-        <a href="#">Features</a>
-        <a href="#">Pricing</a>
-        <a href="#">Support</a>
+        <a href="#features-section">Features</a>
+        <a href="#pricing-section">Pricing</a>
+        <a href="#support-section">Support</a>
+      </div>
+
+      <div id="auth-buttons" class="auth-buttons">
         <a href="/login" class="login-btn">Login</a>
         <a href="/register" class="register-btn">Register</a>
       </div>
     </div>
 
-    <!-- HERO SECTION -->
+    <!-- HERO -->
     <div class="hero">
       <div class="hero-overlay"></div>
-
       <div class="hero-content">
         <h1>Effortless Service Tracking</h1>
         <p>Keep a complete digital history for all your vehicles.</p>
       </div>
     </div>
 
-    <!-- FEATURES CARDS -->
-    <div class="features">
+    <!-- FEATURES SECTION -->
+    <div class="features" id="features-section">
       <div class="feature-card">
-        <img src="https://cdn-icons-png.flaticon.com/512/2921/2921222.png" />
+        <img
+          src="https://cdn-icons-png.flaticon.com/512/2921/2921222.png"
+          alt=""
+        />
         <h3>Effortless Tracking</h3>
         <p>
           Log maintenance, set reminders, and keep a full digital history of
@@ -188,7 +56,10 @@
       </div>
 
       <div class="feature-card">
-        <img src="https://cdn-icons-png.flaticon.com/512/854/854878.png" />
+        <img
+          src="https://cdn-icons-png.flaticon.com/512/854/854878.png"
+          alt=""
+        />
         <h3>Find Local Workshops</h3>
         <p>
           Discover trusted service centers near you and read real customer
@@ -197,7 +68,10 @@
       </div>
 
       <div class="feature-card">
-        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828817.png" />
+        <img
+          src="https://cdn-icons-png.flaticon.com/512/1828/1828817.png"
+          alt=""
+        />
         <h3>Stay Organized & Informed</h3>
         <p>
           Access key vehicle stats, mileage, and manage documents all in one
@@ -206,11 +80,22 @@
       </div>
     </div>
 
+    <!-- PRICING -->
+    <div class="section-space" id="pricing-section">
+      <h2>Pricing</h2>
+      <p>We will add pricing plans soon.</p>
+    </div>
+
+    <!-- SUPPORT -->
+    <div class="section-space" id="support-section">
+      <h2>Support</h2>
+      <p>Need help? Contact us anytime.</p>
+    </div>
+
     <!-- FOOTER -->
     <div class="footer">
       <a href="#">About Us</a>
       <a href="#">Terms</a>
-      <a href="#">Alo Service</a>
       <a href="#">Privacy Policy</a>
       <div style="margin-top: 10px">© 2025 MotriLog – All Rights Reserved.</div>
     </div>
