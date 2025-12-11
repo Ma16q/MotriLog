@@ -32,8 +32,14 @@ async function fetch_and_display_vehicles() {
       const card = document.createElement("div");
       card.className = "vehicle-card";
 
+      // --- CHANGED: Dynamic Image Logic ---
+      const imageSrc = v.image_filename 
+          ? `/static/uploads/${v.image_filename}` 
+          : "/static/img/car-interior.jpg";
+      // ------------------------------------
+
       card.innerHTML = `
-        <img src="/static/img/car-interior.jpg" alt="Vehicle">
+        <img src="${imageSrc}" alt="Vehicle" class="vehicle-img">
         <div class="vehicle-info">
           <h3>${v.manufacturer} ${v.model}</h3>
           <p>Plate: ${v.license_plate || ""}</p>

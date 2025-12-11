@@ -22,9 +22,14 @@ services:
       - mongo
     networks:
       - motarilog-network
+    # --- THIS IS THE MISSING PART ---
+    volumes:
+      # Maps your local 'uploads' folder to the container's 'uploads' folder
+      - ./backend/static/uploads:/app/backend/static/uploads
+    # --------------------------------
     environment:
       - MONGO_URI=mongodb://mongo:27017/motarilog
-      - FLASK_APP=app:create_app()
+      - FLASK_APP=run.py
       - FLASK_DEBUG=1
 
 volumes:
