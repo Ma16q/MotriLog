@@ -143,6 +143,21 @@ def verify_2fa():
         session.pop('pending_2fa_user_id', None)
         session['user_id'] = str(user['_id'])
         
+        # --- NEW: SEND LOGIN NOTIFICATION ---
+        try:
+            chat_id = user.get('telegram_chat_id')
+            if chat_id:
+                login_time = datetime.now().strftime("%Y-%m-%d %H:%M")
+                msg = (
+                    f"✅ **Login Successful**\n"
+                    f"Welcome back, {user.get('full_name', 'Driver')}!\n"
+                    f"🕒 Time: {login_time}"
+                )
+                send_telegram_message(chat_id, msg)
+        except Exception as e:
+            print(f"Failed to send login notification: {e}")
+        # ------------------------------------
+        
         return jsonify({
             "message": "Login verified",
             "user": user_schema.dump(user)
