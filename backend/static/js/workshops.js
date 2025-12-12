@@ -80,6 +80,12 @@ async function fetchWorkshops() {
 }
 
 // --- 3. Update Markers ---
+
+
+
+// ... (previous code remains the same)
+
+// --- 3. Update Markers ---
 function updateMapMarkers(workshops) {
     // Clear old markers
     markers.forEach(m => map.removeLayer(m));
@@ -120,15 +126,31 @@ function updateMapMarkers(workshops) {
             const [lng, lat] = w.location.coordinates;
             const marker = L.marker([lat, lng]).addTo(map);
             
+            // --- UPDATED POPUP WITH DIRECTIONS BUTTON ---
+            const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+
             marker.bindPopup(`
-                <b>${w.name}</b><br>
-                ${w.address}<br>
-                ⭐ ${w.rating}
+                <div style="min-width: 180px; text-align: center;">
+                    <h3 style="margin: 0 0 5px; font-size: 16px; font-weight: 700;">${w.name}</h3>
+                    <p style="margin: 0 0 8px; color: #555; font-size: 13px;">${w.address}</p>
+                    <div style="margin-bottom: 10px; color: #f59e0b; font-weight: bold;">⭐ ${w.rating}</div>
+                    
+                    <a href="${googleMapsUrl}" target="_blank" 
+                       style="display: inline-block; background: #007aff; color: white; text-decoration: none; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+                       🗺️ Get Directions
+                    </a>
+                </div>
             `);
+            // --------------------------------------------
+
             markers.push(marker);
         }
     });
 }
+
+
+
+
 
 // --- 4. Update Sidebar ---
 function updateSidebarList(workshops) {
