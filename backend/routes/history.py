@@ -55,7 +55,6 @@ def add_service_record(vehicle_id):
         # 3. Insert
         db.servicerecords.insert_one(record)
 
-        # 4. SMART UPDATE: If this record has higher mileage than vehicle, update vehicle
         if record['mileage_at_service'] > vehicle['current_mileage']:
             db.vehicles.update_one(
                 {"_id": ObjectId(vehicle_id)},
@@ -65,7 +64,6 @@ def add_service_record(vehicle_id):
                 }}
             )
 
-        # 5. Recalculate Predictions
         prediction_engine.calculate_predictions(vehicle_id)
 
         return jsonify({'message': 'Service added successfully'}), 201
@@ -95,8 +93,6 @@ def delete_service_record(record_id):
         # 3. Delete the Record
         db.servicerecords.delete_one({"_id": ObjectId(record_id)})
 
-        # 4. ROLLBACK LOGIC: Find new highest mileage
-        # Get the max mileage from remaining records
         latest_record = db.servicerecords.find_one(
             {"vehicle_id": vehicle_id},
             sort=[("mileage_at_service", -1)] # Sort Descending (Highest first)

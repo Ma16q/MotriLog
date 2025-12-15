@@ -28,7 +28,7 @@ class PredictionEngine:
         # 1. Get Vehicle
         vehicle = db.vehicles.find_one({"_id": ObjectId(vehicle_id)})
         if not vehicle:
-            print(f"❌ Prediction Engine: Vehicle {vehicle_id} not found.")
+            print(f" Prediction Engine: Vehicle {vehicle_id} not found.")
             return
 
         current_mileage = vehicle.get('current_mileage', 0)
@@ -119,7 +119,6 @@ class PredictionEngine:
             self._send_alert(chat_id, user_name, vehicle_name, service_type, predicted_date, km_remaining)
 
         # E. Update Database
-        # Disable old active predictions
         db.maintenancepredictions.update_many(
             {"vehicle_id": vehicle_id, "maintenance_type": service_type, "is_active": True},
             {"$set": {"is_active": False}}
@@ -152,8 +151,8 @@ class PredictionEngine:
                 f"Please schedule a service."
             )
             send_telegram_message(chat_id, message)
-            print(f"🔔 Alert sent to {user_name} for {service_type}")
+            print(f" Alert sent to {user_name} for {service_type}")
         except Exception as e:
-            print(f"❌ Alert failed: {e}")
+            print(f" Alert failed: {e}")
 
 prediction_engine = PredictionEngine()

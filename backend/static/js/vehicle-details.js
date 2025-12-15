@@ -59,7 +59,7 @@ function viewRecord(recordId) {
     document.getElementById("view-type").textContent = record.service_type.replace(/_/g, ' ').toUpperCase();
     document.getElementById("view-date").textContent = new Date(record.service_date).toLocaleDateString();
     document.getElementById("view-mileage").textContent = `${record.mileage_at_service.toLocaleString()} km`;
-    document.getElementById("view-cost").textContent = record.cost ? `$${record.cost}` : "$0.00";
+    document.getElementById("view-cost").textContent = record.cost ? `${record.cost} SAR` : "0.00 SAR";
     document.getElementById("view-notes").textContent = record.notes || "No notes provided.";
     document.getElementById("view-record-modal").style.display = "flex";
 }

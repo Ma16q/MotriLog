@@ -6,7 +6,6 @@ from backend.models import db, vehicle_schema, manufacturer_schema
 import os
 import uuid
 
-# Import Prediction Engine
 from backend.services.prediction import prediction_engine
 
 vehicles_bp = Blueprint('vehicles_bp', __name__)
@@ -47,10 +46,8 @@ def add_vehicle():
     user_id = session.get('user_id')
     if not user_id: return jsonify({'error': 'Unauthorized'}), 401
     
-    # Handle Multipart/JSON
     if request.content_type.startswith('multipart/form-data'):
         json_data = request.form.to_dict()
-        # Fix empty strings from FormData
         for key, value in json_data.items():
             if value == "" or value == "null": json_data[key] = None
     else:
@@ -109,7 +106,7 @@ def add_vehicle():
         return jsonify({'error': str(e)}), 500
 
 # ---------------------------------------------------------
-# UPDATE VEHICLE (FIX FOR 405 ERROR)
+# UPDATE VEHICLE 
 # ---------------------------------------------------------
 @vehicles_bp.route('/vehicles/<string:vehicle_id>', methods=['PUT'])
 def update_vehicle(vehicle_id):
@@ -157,7 +154,7 @@ def update_vehicle(vehicle_id):
         return jsonify({'error': str(e)}), 500
 
 # ---------------------------------------------------------
-# UPDATE MILEAGE (Pencil Icon) - Adds History Record too!
+# UPDATE MILEAGE
 # ---------------------------------------------------------
 @vehicles_bp.route('/vehicles/<string:vehicle_id>/mileage', methods=['PUT'])
 def update_mileage(vehicle_id):
@@ -201,7 +198,6 @@ def update_mileage(vehicle_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# ... (get_vehicle, delete_vehicle - Keep unchanged) ...
 @vehicles_bp.route('/vehicles/<string:vehicle_id>', methods=['GET'])
 def get_vehicle(vehicle_id):
     user_id = session.get('user_id')

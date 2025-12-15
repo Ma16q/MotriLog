@@ -8,7 +8,6 @@ from backend.models import db, user_schema, vehicle_schema
 from bson.objectid import ObjectId
 import bcrypt
 
-# IMPORTANT: Import the sender from utils to avoid circular import crashes
 from backend.utils import send_telegram_message
 
 auth_bp = Blueprint('auth_bp', __name__)
@@ -85,7 +84,7 @@ def login():
             )
             
             # Send Code via Utility
-            msg = f"🔐 *MotariLog Login*\n\nYour verification code is: `{otp}`\n\n(Valid for 5 minutes)"
+            msg = f" *MotariLog Login*\n\nYour verification code is: `{otp}`\n\n(Valid for 5 minutes)"
             sent = send_telegram_message(chat_id, msg)
             
             if sent:
@@ -99,7 +98,7 @@ def login():
                 }), 202
             
             # If sending failed, just log it and allow normal login
-            print("❌ Failed to send Telegram 2FA. Logging in normally.")
+            print(" Failed to send Telegram 2FA. Logging in normally.")
 
         # --- NORMAL LOGIN ---
         session['user_id'] = str(user['_id'])
@@ -140,8 +139,6 @@ def verify_2fa():
         return jsonify({"error": "Code expired. Please login again."}), 400
         
     if user_code == saved_code:
-        # --- SUCCESS ---
-        # 1. Clean up DB
         db.users.update_one({"_id": user["_id"]}, {"$unset": {"otp_code": "", "otp_expiry": ""}})
         
         # 2. Promote session to fully logged in
@@ -154,9 +151,9 @@ def verify_2fa():
             if chat_id:
                 login_time = datetime.now().strftime("%Y-%m-%d %H:%M")
                 msg = (
-                    f"✅ **Login Successful**\n"
+                    f"**Login Successful**\n"
                     f"Welcome back, {user.get('full_name', 'Driver')}!\n"
-                    f"🕒 Time: {login_time}"
+                    f"Time: {login_time}"
                 )
                 send_telegram_message(chat_id, msg)
         except Exception as e:
@@ -208,7 +205,6 @@ def get_telegram_link():
             {"_id": ObjectId(user_id)},
             {"$set": {"telegram_link_token": token}}
         )
-        # CHANGE TO YOUR BOT NAME
         bot_username = "motrilog_bot"
         
         return jsonify({
@@ -237,29 +233,7 @@ def unlink_telegram():
         return jsonify({'error': str(e)}), 500
 
 # ---------------------------------------------------------
-# 8. TELEGRAM: TEST ALERT
-# ---------------------------------------------------------
-@auth_bp.route('/telegram/test-alert', methods=['POST'])
-def test_telegram_alert():
-    user_id = session.get('user_id')
-    if not user_id: return jsonify({'error': 'Unauthorized'}), 401
-    
-    user = db.users.find_one({"_id": ObjectId(user_id)})
-    chat_id = user.get('telegram_chat_id')
-    
-    if not chat_id:
-        return jsonify({'error': 'Telegram not linked'}), 400
-        
-    msg = "🔔 **Test Notification**\n\nThis confirms your MotariLog alerts are working!"
-    sent = send_telegram_message(chat_id, msg)
-    
-    if sent:
-        return jsonify({'message': 'Test message sent!'}), 200
-    else:
-        return jsonify({'error': 'Failed to send. Check bot token.'}), 500
-
-# ---------------------------------------------------------
-# 9. ADMIN: GET ALL USERS (NEW)
+# 9. ADMIN: GET ALL USERS
 # ---------------------------------------------------------
 @auth_bp.route('/admin/users', methods=['GET'])
 def get_all_users():
@@ -285,7 +259,7 @@ def get_all_users():
     return jsonify(users_data), 200
 
 # ---------------------------------------------------------
-# 10. ADMIN: BAN/UNBAN USER (NEW)
+# 10. ADMIN: BAN/UNBAN USER
 # ---------------------------------------------------------
 @auth_bp.route('/admin/users/<string:target_id>/ban', methods=['POST'])
 def ban_user(target_id):

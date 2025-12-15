@@ -1,10 +1,8 @@
 console.log("ADMIN.JS LOADED!");
 
-// --- 1. Add Manufacturer Logic (Keep Existing) ---
 function setupAddMakerForm() {
     const makerForm = document.getElementById('addMakerForm');
     if (!makerForm) return;
-    // ... (Keep existing logic here) ...
     makerForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const submitBtn = makerForm.querySelector('button[type="submit"]');
@@ -23,24 +21,22 @@ function setupAddMakerForm() {
             });
             const data = await res.json();
             if (res.ok) {
-                alert(`✅ Successfully added ${data.name}!`);
+                alert(` Successfully added ${data.name}!`);
                 makerForm.reset();
             } else if (res.status === 409) {
-                alert(`⚠️ Manufacturer "${payload.name}" already exists.`);
+                alert(` Manufacturer "${payload.name}" already exists.`);
             } else {
-                alert(`❌ Error: ${data.error || 'Failed to add'}`);
+                alert(` Error: ${data.error || 'Failed to add'}`);
             }
         } catch (err) { alert("❌ Network Error"); } 
         finally { submitBtn.disabled = false; submitBtn.innerText = originalText; }
     });
 }
 
-// --- 2. Add Workshop Logic (Keep Existing) ---
 function setupAddWorkshopForm() {
-    // ... (Keep existing logic) ...
 }
 
-// --- 3. NEW: Fetch and Render Users ---
+// ---: Fetch and Render Users ---
 async function fetchAndRenderUsers() {
     const tbody = document.getElementById('users-table-body');
     if(!tbody) return;
@@ -61,14 +57,13 @@ async function fetchAndRenderUsers() {
             const tr = document.createElement('tr');
             tr.style.borderBottom = "1px solid #f0f0f0";
             
-            // Format Vehicles (e.g. "Toyota Camry, Ford Focus")
             const vehStr = u.vehicles.length > 0 
                 ? u.vehicles.map(v => `${v.manufacturer} ${v.model}`).join(", ") 
                 : '<span style="color:#aaa;">No vehicles</span>';
 
             // Telegram status
             const tgStatus = u.telegram_chat_id 
-                ? `<span style="color:#0088cc; font-weight:bold;">✅ Linked</span>` 
+                ? `<span style="color:#0088cc; font-weight:bold;"> Linked</span>` 
                 : `<span style="color:#ccc;">No</span>`;
             
             // Active status
@@ -79,7 +74,7 @@ async function fetchAndRenderUsers() {
             
             // Button Styles
             const btnColor = isActive ? "#ff4757" : "#28a745"; // Red for Ban, Green for Unban
-            const btnText = isActive ? "🚫 Ban" : "✅ Unban";
+            const btnText = isActive ? "Ban" : "Unban";
 
             tr.innerHTML = `
                 <td style="padding: 12px;"><strong>${u.full_name}</strong></td>
@@ -118,7 +113,6 @@ window.toggleBan = async (userId) => {
         const data = await res.json();
         
         if(res.ok) {
-            // Update UI locally to reflect change instantly
             const isActive = data.is_active;
             const statusCell = document.getElementById(`status-${userId}`);
             
@@ -126,7 +120,7 @@ window.toggleBan = async (userId) => {
                 ? "<span style='color:green; font-weight:bold;'>Active</span>" 
                 : "<span style='color:red; font-weight:bold;'>Suspended</span>";
             
-            btn.innerHTML = isActive ? "🚫 Ban" : "✅ Unban";
+            btn.innerHTML = isActive ? "Ban" : "Unban";
             btn.style.background = isActive ? "#ff4757" : "#28a745";
             
             if (!isActive) alert("User has been suspended. A notification was sent if they have Telegram.");

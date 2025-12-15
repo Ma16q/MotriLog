@@ -6,11 +6,11 @@ def send_telegram_message(chat_id, text):
     Sends a message to a specific Telegram Chat ID.
     Returns True if successful, False otherwise.
     """
-    # Get token inside the function to avoid circular issues during init
+    # Get token inside the function 
     token = os.environ.get("TELEGRAM_BOT_TOKEN")
     
     if not token or not chat_id:
-        print("❌ Error: Missing Token or Chat ID")
+        print("Error: Missing Token or Chat ID")
         return False
     
     url = f"https://api.telegram.org/bot{token}/sendMessage"
